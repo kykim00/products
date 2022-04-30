@@ -16,5 +16,11 @@ const GlobalStyle = css`
   p {
     margin: 0;
   }
+  a:link,
+  a:visited,
+  a:hover {
+    color: black;
+    text-decoration: none;
+  }
 `;
 export default GlobalStyle;
