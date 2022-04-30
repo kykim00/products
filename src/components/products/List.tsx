@@ -1,13 +1,18 @@
 import { Product } from "../../types";
 import ProductGridItem from "./Item";
 
-const ProductList = ({ list }: { list: Product[] }) => {
+interface ListProps {
+  list: Product[];
+  view: string;
+}
+
+const ProductList = ({ list, view }: ListProps) => {
   return (
-    <div>
-      {list.map((product, index) => (
-        <ProductGridItem {...product} key={product.club.id} />
+    <>
+      {list.map((product) => (
+        <ProductGridItem {...product} key={product.club.id} view={view} />
       ))}
-    </div>
+    </>
   );
 };
 
