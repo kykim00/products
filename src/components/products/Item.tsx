@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 import { Product } from "../../types";
 
 interface ItemProps extends Product {
@@ -9,17 +10,19 @@ interface ItemProps extends Product {
 const ProductItem = ({ club, leaders, partners, price, view }: ItemProps) => {
   return (
     <ItemContainer view={view}>
-      <img src={club.coverUrl} alt={club.name} />
-      <ItemContent>
-        <h3>{club.name}</h3>
-        <h4>
-          {leaders.map((leader) => leader.name)}
-          {partners.map((partner) => partner.name)}
-        </h4>
-        <p>{club.description}</p>
-        <p>{club.place}</p>
-        <p>{price}</p>
-      </ItemContent>
+      <Link to={`/${club.id}`}>
+        <img src={club.coverUrl} alt={club.name} />
+        <ItemContent>
+          <h3>{club.name}</h3>
+          <h4>
+            {leaders.map((leader) => leader.name)}
+            {partners.map((partner) => partner.name)}
+          </h4>
+          <p>{club.description}</p>
+          <p>{club.place}</p>
+          <p>{price}</p>
+        </ItemContent>
+      </Link>
     </ItemContainer>
   );
 };
