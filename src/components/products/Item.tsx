@@ -9,8 +9,8 @@ interface ItemProps extends Product {
 
 const ProductItem = ({ club, leaders, partners, price, view }: ItemProps) => {
   return (
-    <ItemContainer view={view}>
-      <Link to={`/${club.id}`}>
+    <Link to={`/${club.id}`}>
+      <ItemContainer view={view}>
         <img src={club.coverUrl} alt={club.name} />
         <ItemContent>
           <h3>{club.name}</h3>
@@ -21,9 +21,10 @@ const ProductItem = ({ club, leaders, partners, price, view }: ItemProps) => {
           <p>{club.description}</p>
           <p>{club.place}</p>
           <p>{price}</p>
+          <p>{club.type}</p>
         </ItemContent>
-      </Link>
-    </ItemContainer>
+      </ItemContainer>
+    </Link>
   );
 };
 
