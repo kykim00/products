@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
+import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
 import ListViewLayout from "../components/layouts/ListView";
 import ProductList from "../components/products/List";
@@ -25,6 +26,7 @@ const MainPage = () => {
       <button onClick={handleViewChange} value="list">
         리스트뷰
       </button>
+      <FilterList />
       <ProductWrapper>
         <ProductList list={data} view={view} />
       </ProductWrapper>
