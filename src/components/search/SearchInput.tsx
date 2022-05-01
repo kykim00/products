@@ -13,7 +13,7 @@ const SearchInput = () => {
     else setSearchParams({ ...currentParams, q: "" });
   }, [keyword]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedValue(e.target.value);
   };
   return (
@@ -21,7 +21,7 @@ const SearchInput = () => {
       <input
         type="text"
         placeholder="Search"
-        onChange={handleChange}
+        onChange={handleChangeInput}
         value={searchedValue}
       />
     </div>

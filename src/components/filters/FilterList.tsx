@@ -45,12 +45,12 @@ const FilterList = () => {
 
     setIsVisible(false);
   };
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickFilterMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsVisible(true);
     setClickedMenu(e.currentTarget.value);
   };
 
-  const handleCheck = (e: SyntheticEvent) => {
+  const handleCheckFilter = (e: SyntheticEvent) => {
     const targetName = e.currentTarget.id!;
     const newCheckedItems = { ...checkedItems };
 
@@ -75,7 +75,7 @@ const FilterList = () => {
         <>
           <button
             key={Object.keys(list)[0]}
-            onClick={handleClick}
+            onClick={handleClickFilterMenu}
             value={Object.keys(list)[0]}
           >
             {Object.keys(list)[0]}
@@ -89,7 +89,7 @@ const FilterList = () => {
               <CheckBoxInput
                 key={item}
                 item={item}
-                onCheck={handleCheck}
+                onCheck={handleCheckFilter}
                 checked={Object.values(checkedItems).flat(1).includes(item)}
               />
             ));
