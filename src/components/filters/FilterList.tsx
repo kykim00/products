@@ -1,19 +1,46 @@
 import React, { SyntheticEvent, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import CheckBoxInput from "./CheckBoxInput";
+
+const initialCheckedItems = {
+  place: [],
+  type: [],
+  lecturer: [],
+};
 
 const lists = [
   {
-    장소: ["온라인", "안국", "강남", "롯데백화점 잠실점 문화센터"],
+    place: ["온라인", "안국", "강남", "롯데백화점 잠실점 문화센터"],
   },
-  { 클럽유형: ["클럽장 클럽", "함께 만드는 클럽"] },
-  { 강사: ["양완수", "조새롬", "김정규", "정현진", "윤태진", "신혜성"] },
+  { type: ["클럽장 클럽", "함께 만드는 클럽"] },
+  { lecturer: ["양완수", "조새롬", "김정규", "정현진", "윤태진", "신혜성"] },
 ];
+
+interface ICheckedItems {
+  place: string[];
+  type: string[];
+  lecturer: string[];
+}
 
 const FilterList = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  const [checkedItems, setCheckedItems] =
+    useState<ICheckedItems>(initialCheckedItems);
   const [clickedMenu, setClickedMenu] = useState<string>("");
 
+  const [serchParams, setSearchParams] = useSearchParams();
+
+  const hadleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    setSearchParams({
+      place: checkedItems.place.join("&"),
+      type: checkedItems.type.join("&"),
+      leader: checkedItems.lecturer.join("&"),
+    });
+
+    setIsVisible(false);
+  };
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsVisible(true);
     setClickedMenu(e.currentTarget.value);
@@ -21,11 +48,21 @@ const FilterList = () => {
 
   const handleCheck = (e: SyntheticEvent) => {
     const targetName = e.currentTarget.id!;
-    if (checkedItems.includes(targetName)) {
-      setCheckedItems(checkedItems.filter((i) => i !== targetName));
+    const newCheckedItems = { ...checkedItems };
+
+    if (!Object.values(newCheckedItems).flat(1).includes(targetName)) {
+      newCheckedItems[clickedMenu as keyof ICheckedItems] = [
+        ...newCheckedItems[clickedMenu as keyof ICheckedItems],
+        targetName,
+      ];
     } else {
-      setCheckedItems([...checkedItems, targetName]);
+      newCheckedItems[clickedMenu as keyof ICheckedItems] = [
+        ...newCheckedItems[clickedMenu as keyof ICheckedItems].filter(
+          (item) => item !== targetName
+        ),
+      ];
     }
+    setCheckedItems(newCheckedItems);
   };
 
   return (
@@ -49,14 +86,14 @@ const FilterList = () => {
                 key={item}
                 item={item}
                 onCheck={handleCheck}
-                checked={checkedItems.includes(item)}
+                checked={Object.values(checkedItems).flat(1).includes(item)}
               />
             ));
           }
           return null;
         })}
 
-      {isVisible && <button onClick={() => setIsVisible(false)}>적용</button>}
+      {isVisible && <button onClick={hadleSubmit}>적용</button>}
     </div>
   );
 };
