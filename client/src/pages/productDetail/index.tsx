@@ -2,19 +2,21 @@ import styled from "@emotion/styled";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import ProductItem from "../../components/products/Item";
-import getProductsData from "../../utils/getProductsData";
+import { GET_PRODUCT } from "../../graphql/products";
+import { Product } from "../../types";
+import { graphqlFetcher } from "../../utils/graphqlFetcher";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const { data } = useQuery("products", () => getProductsData());
-  const product = data?.find((product) => product.club.id === id);
-
-  if (!product) return <div>상품이 존재하지 않습니다.</div>;
+  const { data } = useQuery<{ product: Product }>(["product", id], () =>
+    graphqlFetcher(GET_PRODUCT, { id })
+  );
+  if (!data) return <div>상품이 존재하지 않습니다.</div>;
 
   return (
     <ProductDetailContainer>
       상세
-      <ProductItem {...product} view="grid" />
+      <ProductItem {...data.product} view="grid" />
     </ProductDetailContainer>
   );
 };
