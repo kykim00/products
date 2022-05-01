@@ -6,10 +6,14 @@ import GridViewLayout from "../components/layouts/GridView";
 import ListViewLayout from "../components/layouts/ListView";
 import ProductList from "../components/products/List";
 import SearchInput from "../components/search/SearchInput";
-import getProductsData from "../utils/getProductsData";
+import GET_PRODUCTS from "../graphql/products";
+import { Product } from "../types";
+import { graphqlFetcher } from "../utils/graphqlFetcher";
 
 const MainPage = () => {
-  const { data } = useQuery("products", () => getProductsData());
+  const { data } = useQuery<{ products: Product[] }>("products", () =>
+    graphqlFetcher(GET_PRODUCTS)
+  );
   const [view, setView] = useState("grid");
 
   const [serchParams] = useSearchParams();
@@ -25,7 +29,6 @@ const MainPage = () => {
 
   const ProductWrapper = view === "grid" ? GridViewLayout : ListViewLayout;
   if (!data) return null;
-
   return (
     <div>
       Main
@@ -39,7 +42,7 @@ const MainPage = () => {
       <FilterList />
       <ProductWrapper>
         <ProductList
-          list={data.filter((d) => {
+          list={data.products.filter((d) => {
             if (place && place[0].length) {
               if (!place.includes(d.club.place)) return false;
             }
