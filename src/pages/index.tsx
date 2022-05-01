@@ -5,6 +5,7 @@ import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
 import ListViewLayout from "../components/layouts/ListView";
 import ProductList from "../components/products/List";
+import SearchInput from "../components/search/SearchInput";
 import getProductsData from "../utils/getProductsData";
 
 const MainPage = () => {
@@ -17,16 +18,14 @@ const MainPage = () => {
   const type = serchParams.get("type")?.split("&");
   const leaders = serchParams.get("leaders")?.split("&");
   const partners = serchParams.get("partners")?.split("&");
-
+  const searchedTitle = serchParams.get("q");
   const handleViewChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     setView(e.currentTarget.value);
   };
 
-  console.log(type);
   const ProductWrapper = view === "grid" ? GridViewLayout : ListViewLayout;
   if (!data) return null;
 
-  console.log(data);
   return (
     <div>
       Main
@@ -36,6 +35,7 @@ const MainPage = () => {
       <button onClick={handleViewChange} value="list">
         리스트뷰
       </button>
+      <SearchInput />
       <FilterList />
       <ProductWrapper>
         <ProductList
@@ -51,6 +51,9 @@ const MainPage = () => {
             }
             if (partners && partners[0].length) {
               if (!partners.includes(d.partners[0].name)) return false;
+            }
+            if (searchedTitle) {
+              return d.club.name.includes(searchedTitle);
             }
             return true;
           })}
