@@ -5,7 +5,8 @@ import CheckBoxInput from "./CheckBoxInput";
 const initialCheckedItems = {
   place: [],
   type: [],
-  lecturer: [],
+  leaders: [],
+  partners: [],
 };
 
 const lists = [
@@ -13,13 +14,15 @@ const lists = [
     place: ["온라인", "안국", "강남", "롯데백화점 잠실점 문화센터"],
   },
   { type: ["클럽장 클럽", "함께 만드는 클럽"] },
-  { lecturer: ["양완수", "조새롬", "김정규", "정현진", "윤태진", "신혜성"] },
+  { leaders: ["양완수", "김정규", "신혜성"] },
+  { partners: ["조새롬", "정현진", "윤태진"] },
 ];
 
 interface ICheckedItems {
   place: string[];
   type: string[];
-  lecturer: string[];
+  leaders: string[];
+  partners: string[];
 }
 
 const FilterList = () => {
@@ -36,7 +39,8 @@ const FilterList = () => {
     setSearchParams({
       place: checkedItems.place.join("&"),
       type: checkedItems.type.join("&"),
-      leader: checkedItems.lecturer.join("&"),
+      leaders: checkedItems.leaders.join("&"),
+      partners: checkedItems.partners.join("&"),
     });
 
     setIsVisible(false);
