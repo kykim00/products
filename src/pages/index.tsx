@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
 import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
 import ListViewLayout from "../components/layouts/ListView";
@@ -10,12 +11,21 @@ const MainPage = () => {
   const { data } = useQuery("products", () => getProductsData());
   const [view, setView] = useState("grid");
 
+  const [serchParams] = useSearchParams();
+
+  const place = serchParams.get("place")?.split("&");
+  const type = serchParams.get("type")?.split("&");
+  const leaders = serchParams.get("leaders")?.split("&");
+  const partners = serchParams.get("partners")?.split("&");
+
   const handleViewChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     setView(e.currentTarget.value);
   };
 
+  console.log(type);
   const ProductWrapper = view === "grid" ? GridViewLayout : ListViewLayout;
   if (!data) return null;
+
   console.log(data);
   return (
     <div>
@@ -28,7 +38,24 @@ const MainPage = () => {
       </button>
       <FilterList />
       <ProductWrapper>
-        <ProductList list={data} view={view} />
+        <ProductList
+          list={data.filter((d) => {
+            if (place && place[0].length) {
+              if (!place.includes(d.club.place)) return false;
+            }
+            if (type && type[0].length) {
+              if (!type.includes(d.club.type)) return false;
+            }
+            if (leaders && leaders[0].length) {
+              if (!leaders.includes(d.leaders[0].name)) return false;
+            }
+            if (partners && partners[0].length) {
+              if (!partners.includes(d.partners[0].name)) return false;
+            }
+            return true;
+          })}
+          view={view}
+        />
       </ProductWrapper>
     </div>
   );
