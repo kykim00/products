@@ -1,5 +1,5 @@
-import React, { SyntheticEvent, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { SyntheticEvent, useCallback, useState } from "react";
+import useFilterAndSearch from "../../hooks/useFilterAndSearch";
 import CheckBoxInput from "./CheckBoxInput";
 
 const initialCheckedItems = {
@@ -31,50 +31,55 @@ const FilterList = () => {
     useState<ICheckedItems>(initialCheckedItems);
   const [clickedMenu, setClickedMenu] = useState<string>("");
 
-  const [serchParams, setSearchParams] = useSearchParams();
+  const { searchedTitle, setSearchParams } = useFilterAndSearch();
 
-  const hadleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const hadleApplyFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const searchQuery = searchedTitle ? { q: searchedTitle } : null;
 
     setSearchParams({
       place: checkedItems.place.join("&"),
       type: checkedItems.type.join("&"),
       leaders: checkedItems.leaders.join("&"),
       partners: checkedItems.partners.join("&"),
+      ...searchQuery,
     });
 
     setIsVisible(false);
   };
+
   const handleClickFilterMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsVisible(true);
     setClickedMenu(e.currentTarget.value);
   };
 
-  const handleCheckFilter = (e: SyntheticEvent) => {
-    const targetName = e.currentTarget.id!;
-    const newCheckedItems = { ...checkedItems };
+  const handleCheckFilterItem = useCallback(
+    (e: SyntheticEvent) => {
+      const targetName = e.currentTarget.id!;
+      const newCheckedItems = { ...checkedItems };
 
-    if (!Object.values(newCheckedItems).flat(1).includes(targetName)) {
-      newCheckedItems[clickedMenu as keyof ICheckedItems] = [
-        ...newCheckedItems[clickedMenu as keyof ICheckedItems],
-        targetName,
-      ];
-    } else {
-      newCheckedItems[clickedMenu as keyof ICheckedItems] = [
-        ...newCheckedItems[clickedMenu as keyof ICheckedItems].filter(
-          (item) => item !== targetName
-        ),
-      ];
-    }
-    setCheckedItems(newCheckedItems);
-  };
+      if (!Object.values(newCheckedItems).flat(1).includes(targetName)) {
+        newCheckedItems[clickedMenu as keyof ICheckedItems] = [
+          ...newCheckedItems[clickedMenu as keyof ICheckedItems],
+          targetName,
+        ];
+      } else {
+        newCheckedItems[clickedMenu as keyof ICheckedItems] = [
+          ...newCheckedItems[clickedMenu as keyof ICheckedItems].filter(
+            (item) => item !== targetName
+          ),
+        ];
+      }
+      setCheckedItems(newCheckedItems);
+    },
+    [clickedMenu, checkedItems]
+  );
 
   return (
     <div>
-      {lists.map((list) => (
+      {lists.map((list, index) => (
         <>
           <button
-            key={Object.keys(list)[0]}
+            key={`${Object.keys(list)[0]}-${index}`}
             onClick={handleClickFilterMenu}
             value={Object.keys(list)[0]}
           >
@@ -85,11 +90,11 @@ const FilterList = () => {
       {isVisible &&
         lists.map((list) => {
           if (Object.keys(list)[0] === clickedMenu) {
-            return Object.values(list)[0].map((item: string) => (
+            return Object.values(list)[0].map((item: string, index: number) => (
               <CheckBoxInput
-                key={item}
+                key={`${item}-${index}`}
                 item={item}
-                onCheck={handleCheckFilter}
+                onCheck={handleCheckFilterItem}
                 checked={Object.values(checkedItems).flat(1).includes(item)}
               />
             ));
@@ -97,7 +102,7 @@ const FilterList = () => {
           return null;
         })}
 
-      {isVisible && <button onClick={hadleSubmit}>적용</button>}
+      {isVisible && <button onClick={hadleApplyFilter}>적용</button>}
     </div>
   );
 };

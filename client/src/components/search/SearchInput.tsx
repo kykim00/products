@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
+import useFilterAndSearch from "../../hooks/useFilterAndSearch";
 
 const SearchInput = () => {
   const [searchedValue, setSearchedValue] = useState("");
   const keyword = useDebounce(searchedValue);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { currentParams, setSearchParams } = useFilterAndSearch();
 
   useEffect(() => {
-    const currentParams = Object.fromEntries(searchParams);
     if (keyword) setSearchParams({ ...currentParams, q: keyword });
     else setSearchParams({ ...currentParams, q: "" });
   }, [keyword]);
 
-  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedValue(e.target.value);
   };
   return (
@@ -21,7 +20,7 @@ const SearchInput = () => {
       <input
         type="text"
         placeholder="Search"
-        onChange={handleChangeInput}
+        onChange={handleChangeSearchInput}
         value={searchedValue}
       />
     </div>

@@ -1,5 +1,5 @@
 import { Product } from "../../types";
-import ProductGridItem from "./Item";
+import ProductItem from "./Item";
 
 interface ListProps {
   list: Product[];
@@ -9,7 +9,7 @@ interface ListProps {
 const ProductList = ({ list, view }: ListProps) => (
   <>
     {list.map((product) => (
-      <ProductGridItem {...product} key={product.club.id} view={view} />
+      <ProductItem {...product} key={product.club.id} view={view} />
     ))}
   </>
 );
