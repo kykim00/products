@@ -33,14 +33,17 @@ const FilterList = () => {
 
   const [serchParams, setSearchParams] = useSearchParams();
 
+  const searchedTitle = serchParams.get("q");
+
   const hadleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
+    const searchQuery = searchedTitle ? { q: searchedTitle } : null;
     setSearchParams({
       place: checkedItems.place.join("&"),
       type: checkedItems.type.join("&"),
       leaders: checkedItems.leaders.join("&"),
       partners: checkedItems.partners.join("&"),
+      ...searchQuery,
     });
 
     setIsVisible(false);
