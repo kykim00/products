@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import useFilterAndSearch from "../../hooks/useFilterAndSearch";
 import CheckBoxInput from "./CheckBoxInput";
 
 const initialCheckedItems = {
@@ -31,13 +31,12 @@ const FilterList = () => {
     useState<ICheckedItems>(initialCheckedItems);
   const [clickedMenu, setClickedMenu] = useState<string>("");
 
-  const [serchParams, setSearchParams] = useSearchParams();
-
-  const searchedTitle = serchParams.get("q");
+  const { searchedTitle, setSearchParams } = useFilterAndSearch();
 
   const hadleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const searchQuery = searchedTitle ? { q: searchedTitle } : null;
+
     setSearchParams({
       place: checkedItems.place.join("&"),
       type: checkedItems.type.join("&"),
@@ -53,7 +52,7 @@ const FilterList = () => {
     setClickedMenu(e.currentTarget.value);
   };
 
-  const handleCheckFilter = (e: SyntheticEvent) => {
+  const handleCheckFilterItem = (e: SyntheticEvent) => {
     const targetName = e.currentTarget.id!;
     const newCheckedItems = { ...checkedItems };
 
@@ -92,7 +91,7 @@ const FilterList = () => {
               <CheckBoxInput
                 key={item}
                 item={item}
-                onCheck={handleCheckFilter}
+                onCheck={handleCheckFilterItem}
                 checked={Object.values(checkedItems).flat(1).includes(item)}
               />
             ));

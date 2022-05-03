@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useInfiniteQuery, useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
+import { useInfiniteQuery } from "react-query";
 import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
 import ListViewLayout from "../components/layouts/ListView";
 import ProductList from "../components/products/List";
 import SearchInput from "../components/search/SearchInput";
 import GET_PRODUCTS from "../graphql/products";
+import useFilterAndSearch from "../hooks/useFilterAndSearch";
 import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import { Product } from "../types";
 import { graphqlFetcher } from "../utils/graphqlFetcher";
@@ -14,6 +14,9 @@ import { graphqlFetcher } from "../utils/graphqlFetcher";
 const MainPage = () => {
   const fetchMoreRef = useRef<HTMLDivElement>(null);
   const intersecting = useIntersectionObserver(fetchMoreRef);
+  const [view, setView] = useState("grid");
+  const { place, type, leaders, partners, searchedTitle } =
+    useFilterAndSearch();
 
   const { data, isSuccess, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteQuery<{ products: Product[] }>(
@@ -26,25 +29,19 @@ const MainPage = () => {
         },
       }
     );
+
   useEffect(() => {
     if (!intersecting || !isSuccess || !hasNextPage || isFetchingNextPage)
       return;
     fetchNextPage();
   }, [intersecting]);
 
-  const [view, setView] = useState("grid");
-
-  const [serchParams] = useSearchParams();
-
-  const place = serchParams.get("place")?.split("&");
-  const type = serchParams.get("type")?.split("&");
-  const leaders = serchParams.get("leaders")?.split("&");
-  const partners = serchParams.get("partners")?.split("&");
-  const searchedTitle = serchParams.get("q");
   const handleViewChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     setView(e.currentTarget.value);
   };
+
   const ProductWrapper = view === "grid" ? GridViewLayout : ListViewLayout;
+
   if (!data) return null;
 
   /* 
