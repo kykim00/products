@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useQuery } from "react-query";
+import React, { useEffect, useRef, useState } from "react";
+import { useInfiniteQuery, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
@@ -7,13 +7,32 @@ import ListViewLayout from "../components/layouts/ListView";
 import ProductList from "../components/products/List";
 import SearchInput from "../components/search/SearchInput";
 import GET_PRODUCTS from "../graphql/products";
+import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import { Product } from "../types";
 import { graphqlFetcher } from "../utils/graphqlFetcher";
 
 const MainPage = () => {
-  const { data } = useQuery<{ products: Product[] }>("products", () =>
-    graphqlFetcher(GET_PRODUCTS)
-  );
+  const fetchMoreRef = useRef<HTMLDivElement>(null);
+  const intersecting = useIntersectionObserver(fetchMoreRef);
+
+  const { data, isSuccess, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery<{ products: Product[] }>(
+      ["products"],
+      ({ pageParam = 0 }) =>
+        graphqlFetcher(GET_PRODUCTS, { pageNum: pageParam }),
+      {
+        getNextPageParam: (_, allPages) => {
+          return allPages.length * 12 < 78 ? allPages.length * 12 : undefined;
+        },
+      }
+    );
+  useEffect(() => {
+    console.log(hasNextPage);
+    if (!intersecting || !isSuccess || !hasNextPage || isFetchingNextPage)
+      return;
+    fetchNextPage();
+  }, [intersecting]);
+
   const [view, setView] = useState("grid");
 
   const [serchParams] = useSearchParams();
@@ -41,8 +60,9 @@ const MainPage = () => {
       <SearchInput />
       <FilterList />
       <ProductWrapper>
-        <ProductList
-          list={data.products.filter((d) => {
+        <ProductList list={data.pages} view={view} />
+        {/* <ProductList
+          list={data.pages.products.filter((d) => {
             if (place && place[0].length) {
               if (!place.includes(d.club.place)) return false;
             }
@@ -61,8 +81,9 @@ const MainPage = () => {
             return true;
           })}
           view={view}
-        />
+        /> */}
       </ProductWrapper>
+      <div ref={fetchMoreRef}></div>
     </div>
   );
 };
