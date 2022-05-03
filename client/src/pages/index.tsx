@@ -27,7 +27,6 @@ const MainPage = () => {
       }
     );
   useEffect(() => {
-    console.log(hasNextPage);
     if (!intersecting || !isSuccess || !hasNextPage || isFetchingNextPage)
       return;
     fetchNextPage();
@@ -45,9 +44,22 @@ const MainPage = () => {
   const handleViewChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     setView(e.currentTarget.value);
   };
-
   const ProductWrapper = view === "grid" ? GridViewLayout : ListViewLayout;
   if (!data) return null;
+
+  /* 
+  data: {                                               
+    pages: [
+      {products: [{...}]},
+      {products: [{...}]},     =>     products = [{...}, {...}...]  
+    ],
+    pageParams: [undefined, ...]
+  }
+  */
+  const products = data.pages
+    .map((page) => Object.values(page.products))
+    .reduce((acc, cur) => acc.concat(cur));
+
   return (
     <div>
       Main
@@ -60,9 +72,8 @@ const MainPage = () => {
       <SearchInput />
       <FilterList />
       <ProductWrapper>
-        <ProductList list={data.pages} view={view} />
-        {/* <ProductList
-          list={data.pages.products.filter((d) => {
+        <ProductList
+          list={products.filter((d) => {
             if (place && place[0].length) {
               if (!place.includes(d.club.place)) return false;
             }
@@ -81,7 +92,7 @@ const MainPage = () => {
             return true;
           })}
           view={view}
-        /> */}
+        />
       </ProductWrapper>
       <div ref={fetchMoreRef}></div>
     </div>
