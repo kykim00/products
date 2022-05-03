@@ -1,3 +1,5 @@
+import React from "react";
+
 interface CheckBoxInputProps {
   item: string;
   onCheck: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,4 +15,4 @@ const CheckBoxInput = ({ item, onCheck, checked }: CheckBoxInputProps) => {
   );
 };
 
-export default CheckBoxInput;
+export default React.memo(CheckBoxInput);
