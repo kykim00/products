@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useQuery } from "react-query";
+import React, { useEffect, useRef, useState } from "react";
+import { useInfiniteQuery, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
@@ -7,13 +7,31 @@ import ListViewLayout from "../components/layouts/ListView";
 import ProductList from "../components/products/List";
 import SearchInput from "../components/search/SearchInput";
 import GET_PRODUCTS from "../graphql/products";
+import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import { Product } from "../types";
 import { graphqlFetcher } from "../utils/graphqlFetcher";
 
 const MainPage = () => {
-  const { data } = useQuery<{ products: Product[] }>("products", () =>
-    graphqlFetcher(GET_PRODUCTS)
-  );
+  const fetchMoreRef = useRef<HTMLDivElement>(null);
+  const intersecting = useIntersectionObserver(fetchMoreRef);
+
+  const { data, isSuccess, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery<{ products: Product[] }>(
+      ["products"],
+      ({ pageParam = 0 }) =>
+        graphqlFetcher(GET_PRODUCTS, { pageNum: pageParam }),
+      {
+        getNextPageParam: (_, allPages) => {
+          return allPages.length * 12 < 78 ? allPages.length * 12 : undefined;
+        },
+      }
+    );
+  useEffect(() => {
+    if (!intersecting || !isSuccess || !hasNextPage || isFetchingNextPage)
+      return;
+    fetchNextPage();
+  }, [intersecting]);
+
   const [view, setView] = useState("grid");
 
   const [serchParams] = useSearchParams();
@@ -26,9 +44,22 @@ const MainPage = () => {
   const handleViewChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     setView(e.currentTarget.value);
   };
-
   const ProductWrapper = view === "grid" ? GridViewLayout : ListViewLayout;
   if (!data) return null;
+
+  /* 
+  data: {                                               
+    pages: [
+      {products: [{...}]},
+      {products: [{...}]},     =>     products = [{...}, {...}...]  
+    ],
+    pageParams: [undefined, ...]
+  }
+  */
+  const products = data.pages
+    .map((page) => Object.values(page.products))
+    .reduce((acc, cur) => acc.concat(cur));
+
   return (
     <div>
       Main
@@ -42,7 +73,7 @@ const MainPage = () => {
       <FilterList />
       <ProductWrapper>
         <ProductList
-          list={data.products.filter((d) => {
+          list={products.filter((d) => {
             if (place && place[0].length) {
               if (!place.includes(d.club.place)) return false;
             }
@@ -63,6 +94,7 @@ const MainPage = () => {
           view={view}
         />
       </ProductWrapper>
+      <div ref={fetchMoreRef}></div>
     </div>
   );
 };

@@ -6,14 +6,11 @@ interface ListProps {
   view: string;
 }
 
-const ProductList = ({ list, view }: ListProps) => {
-  return (
-    <>
-      {list.map((product) => (
-        <ProductGridItem {...product} key={product.club.id} view={view} />
-      ))}
-    </>
-  );
-};
-
+const ProductList = ({ list, view }: ListProps) => (
+  <>
+    {list.map((product) => (
+      <ProductGridItem {...product} key={product.club.id} view={view} />
+    ))}
+  </>
+);
 export default ProductList;
