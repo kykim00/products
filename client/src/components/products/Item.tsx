@@ -15,7 +15,7 @@ const ProductItem = ({ club, leaders, partners, price, view }: ItemProps) => {
         <ItemContent>
           <h3>{club.name}</h3>
           <h4>
-            {leaders.map((leader) => leader.name)}
+            {leaders.map((leader) => leader.name)}{" "}
             {partners.map((partner) => partner.name)}
           </h4>
           <p>{club.description}</p>
@@ -62,6 +62,7 @@ const ItemContainer = styled.div<{ view: string }>`
   border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
+  overflow: hidden;
   h3,
   h4,
   p {
