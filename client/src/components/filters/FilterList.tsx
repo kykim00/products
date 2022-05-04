@@ -33,7 +33,8 @@ const FilterList = () => {
     useState<ICheckedItems>(initialCheckedItems);
   const [clickedMenu, setClickedMenu] = useState<string>("");
 
-  const { searchedTitle, setSearchParams } = useFilterAndSearch();
+  const { place, type, leaders, partners, searchedTitle, setSearchParams } =
+    useFilterAndSearch();
 
   const handleApplyFilter = () => {
     const searchQuery = searchedTitle ? { q: searchedTitle } : null;
@@ -84,6 +85,16 @@ const FilterList = () => {
     },
     [clickedMenu, checkedItems]
   );
+  const handleCloseFilterModal = () => {
+    const prevCheckedItems = {
+      place: place || [],
+      type: type || [],
+      leaders: leaders || [],
+      partners: partners || [],
+    };
+    setCheckedItems(prevCheckedItems);
+    setIsVisible(false);
+  };
 
   return (
     <FilterContainer>
@@ -123,7 +134,12 @@ const FilterList = () => {
                 return null;
               })}
             </div>
-            <Button onClick={handleApplyFilter}>적용</Button>
+            <div>
+              <Button variant="secondary" onClick={handleCloseFilterModal}>
+                취소
+              </Button>
+              <Button onClick={handleApplyFilter}>적용</Button>
+            </div>
           </FilterContent>
         </>
       )}
@@ -138,7 +154,7 @@ const FilterContainer = styled.div`
     margin-right: 5px;
   }
   ul {
-    padding-left: 55px;
+    margin-left: 55px;
   }
 `;
 
@@ -151,11 +167,16 @@ const ResetButton = styled.button`
 `;
 
 const FilterContent = styled.ul`
+  width: 230px;
   height: 130px;
   display: flex;
+  padding: 20px;
+  position: absolute;
   flex-direction: column;
   justify-content: space-between;
   z-index: 10;
+  background-color: #fff;
+  box-shadow: rgb(0 0 0 / 16%) 0px 4px 10px;
   button {
     width: 30%;
   }
