@@ -1,5 +1,7 @@
+import styled from "@emotion/styled";
 import React, { useEffect, useRef, useState } from "react";
 import { useInfiniteQuery } from "react-query";
+import Button from "../components/common/Button";
 import FilterList from "../components/filters/FilterList";
 import GridViewLayout from "../components/layouts/GridView";
 import ListViewLayout from "../components/layouts/ListView";
@@ -59,15 +61,19 @@ const MainPage = () => {
 
   return (
     <div>
-      Main
-      <button onClick={handleViewChange} value="grid">
-        그리드뷰
-      </button>
-      <button onClick={handleViewChange} value="list">
-        리스트뷰
-      </button>
-      <SearchInput />
-      <FilterList />
+      <Header>
+        Main
+        <Button variant="secondary" onClick={handleViewChange} value="grid">
+          그리드뷰
+        </Button>
+        <Button onClick={handleViewChange} value="list">
+          리스트뷰
+        </Button>
+      </Header>
+      <FilterBar>
+        <FilterList />
+        <SearchInput />
+      </FilterBar>
       <ProductWrapper>
         <ProductList
           list={products.filter((d) => {
@@ -96,4 +102,15 @@ const MainPage = () => {
   );
 };
 
+const Header = styled.h2`
+  display: flex;
+  gap: 20px;
+  align-items: center;
+`;
+const FilterBar = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: 10px;
+`;
 export default MainPage;

@@ -15,7 +15,7 @@ const ProductDetailPage = () => {
 
   return (
     <ProductDetailContainer>
-      상세
+      <h2>상세</h2>
       <ProductItem {...data.product} view="grid" />
     </ProductDetailContainer>
   );

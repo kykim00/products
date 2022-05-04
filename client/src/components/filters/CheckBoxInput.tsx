@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import React from "react";
 
 interface CheckBoxInputProps {
@@ -9,10 +10,20 @@ interface CheckBoxInputProps {
 const CheckBoxInput = ({ item, onCheck, checked }: CheckBoxInputProps) => {
   return (
     <div>
-      <input type="checkbox" id={item} onChange={onCheck} checked={checked} />
+      <CheckBox
+        type="checkbox"
+        id={item}
+        onChange={onCheck}
+        checked={checked}
+      />
       <label htmlFor={item}>{item}</label>
     </div>
   );
 };
 
+const CheckBox = styled.input`
+  &:checked {
+    background-color: #fff;
+  }
+`;
 export default React.memo(CheckBoxInput);
