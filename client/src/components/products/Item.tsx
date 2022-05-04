@@ -58,6 +58,7 @@ const ItemContainer = styled.div<{ view: string }>`
     }
   }}
   width: 100%;
+  height: 100%;
   border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
