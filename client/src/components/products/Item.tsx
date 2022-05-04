@@ -62,6 +62,7 @@ const ItemContainer = styled.div<{ view: string }>`
   border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
+  overflow: hidden;
   h3,
   h4,
   p {
