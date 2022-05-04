@@ -15,7 +15,7 @@ const ProductItem = ({ club, leaders, partners, price, view }: ItemProps) => {
         <ItemContent>
           <h3>{club.name}</h3>
           <h4>
-            {leaders.map((leader) => leader.name)}
+            {leaders.map((leader) => leader.name)}{" "}
             {partners.map((partner) => partner.name)}
           </h4>
           <p>{club.description}</p>
